@@ -1,0 +1,7 @@
+{
+  "name": "muxicOn",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
