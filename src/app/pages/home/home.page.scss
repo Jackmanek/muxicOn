@@ -1,0 +1,75 @@
+.player-container {
+  background-color: #121212; /* Fondo oscuro para el reproductor */
+  color: #fff; /* Texto blanco */
+}
+
+.player-card {
+  background-color: #1c1c1c; /* Fondo de tarjeta en un tono más oscuro */
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.player-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+.player-title-song{
+  color: white;
+  font-size: 15px;
+}
+ion-content {
+  background-color: #4f4c4c;
+}
+
+ion-button {
+  color: #4CAF50; /* Color verde para los botones */
+  font-size: 30px;
+}
+
+ion-button:hover {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+ion-range {
+  width: 80%;
+  --bar-height: 10px;
+  --knob-size: 20px;
+  --background: #444; /* Barra de progreso oscura */
+  --color-checked: #4CAF50; /* Color verde en la barra */
+}
+
+ion-range .range-knob {
+  background-color: #4CAF50; /* Color verde en el knob */
+}
+
+ion-title {
+  font-family: 'Orbitron', sans-serif; /* Fuente futurista */
+  font-size: 24px;
+}
+
+ion-card-header {
+  text-align: center;
+  color: #4CAF50; /* Título y subtítulo en verde */
+  font-family: 'Orbitron', sans-serif; /* Fuente futurista */
+}
+
+ion-card-subtitle {
+  font-size: 14px;
+  font-weight: 300;
+  color: #ddd;
+}
+
+ion-icon {
+  font-size: 25px; /* Iconos más grandes */
+}
+
+  

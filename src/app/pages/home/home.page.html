@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title>🎵 MuxicSound</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goToProfile()">
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding player-container">
+  <!-- Lista de canciones -->
+  <ion-list>
+    <ion-item *ngFor="let song of songs" (click)="playSong(song)">
+      <ion-label>
+        <h2>{{ song.url }}</h2>
+        <p>{{ song.artist }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <!-- Reproductor de música -->
+  <ion-card *ngIf="currentSong" class="player-card">
+    <ion-card-header>
+      <ion-card-title class="player-title-song">{{ currentSong.url }}</ion-card-title>
+      <ion-card-subtitle>{{ currentSong.artist }}</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content class="player-controls">
+      <!-- Barra de progreso -->
+      <ion-range min="0" [max]="duration" [(ngModel)]="currentTime" (ionChange)="seekAudio()"></ion-range>
+
+      <!-- Botones de control -->
+      <div class="controls">
+        <ion-button (click)="toggleShuffle()">
+          <ion-icon [name]="isShuffle ? 'shuffle' : 'shuffle-outline'"></ion-icon>
+        </ion-button>
+
+        <ion-button fill="clear" (click)="prevSong()">
+          <ion-icon name="play-skip-back-outline"></ion-icon>
+        </ion-button>
+
+        <ion-button fill="clear" (click)="togglePlayPause()">
+          <ion-icon *ngIf="isPlaying" name="pause-circle-outline"></ion-icon>
+          <ion-icon *ngIf="!isPlaying" name="play-circle-outline"></ion-icon>
+        </ion-button>
+
+        <ion-button fill="clear" (click)="nextSong()">
+          <ion-icon name="play-skip-forward-outline"></ion-icon>
+        </ion-button>
+
+        <ion-button (click)="toggleLoop()">
+          <ion-icon [name]="loopMode === 'all' ? 'repeat' : loopMode === 'one' ? 'repeat-outline' : 'repeat-outline'"></ion-icon>
+        </ion-button>
+
+        <ion-range min="0" max="1" step="0.1" [(ngModel)]="volume" (ionChange)="setVolume()">
+          <ion-icon slot="start" name="volume-mute-outline"></ion-icon>
+          <ion-icon slot="end" name="volume-high-outline"></ion-icon>
+        </ion-range>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
