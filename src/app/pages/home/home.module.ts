@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { HomePageRoutingModule } from './home-routing.module';
 import { HomePage } from './home.page';
+import { MusicPlayerComponent } from 'src/app/components/music-player/music-player.component';
 
 @NgModule({
   imports: [
@@ -11,7 +12,8 @@ import { HomePage } from './home.page';
     FormsModule,
     IonicModule,
     HomePageRoutingModule,
-    HomePage
+    HomePage,
+    MusicPlayerComponent,
   ],
 })
 export class HomePageModule {}

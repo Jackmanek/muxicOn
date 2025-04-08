@@ -29,9 +29,12 @@ export class AuthPage  {
     );
   }
   register(){
-    this.http.post(this.apiUrl+'register/', this.registerData).subscribe(
+    console.log(this.registerData);
+    this.http.post(this.apiUrl + 'register/', this.registerData, {
+      headers: { 'Content-Type': 'application/json' } // Asegurar JSON
+    }).subscribe(
       () => {
-        alert('Registro existoso, ahora inicia sessión.');
+        alert('Registro exitoso, ahora inicia sesión.');
         this.authMode = 'login';
       },
       error => console.error('Error en registro', error)

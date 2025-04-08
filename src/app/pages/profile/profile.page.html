@@ -1,6 +1,11 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>🎧 Mi Perfil</ion-title>
+    <ion-button slot="start">
+      <ion-button (click)="home()">
+        <ion-title>🎧 Mi Perfil</ion-title>
+      </ion-button>
+    </ion-button>
+    
     <ion-buttons slot="end">
       <ion-button (click)="logout()">
         <ion-icon name="log-out-outline"></ion-icon>

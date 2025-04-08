@@ -1,6 +1,8 @@
-<ion-header>
-  <ion-toolbar color="dark">
-    <ion-title>🎵 MuxicSound</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="header-toolbar">
+    <ion-title>
+      <span class="app-title">🎵 MuxicSound</span>
+    </ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="goToProfile()">
         <ion-icon name="person-circle-outline"></ion-icon>
@@ -9,56 +11,61 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding player-container">
+<ion-content class="main-content">
+  <!-- Barra de búsqueda -->
+  <div class="search-container">
+    <ion-icon name="search-outline" class="search-icon"></ion-icon>
+    <ion-input placeholder="Buscar canciones, artistas..." class="search-input"></ion-input>
+  </div>
+
   <!-- Lista de canciones -->
-  <ion-list>
-    <ion-item *ngFor="let song of songs" (click)="playSong(song)">
+  <h2 class="section-title">Tu música</h2>
+  <ion-list lines="none" class="song-list">
+    <ion-item *ngFor="let song of songs" (click)="playSong(song)" class="song-item" [class.active-song]="currentSong?.id === song.id">
+      <div class="song-thumbnail" slot="start">
+        <div class="song-equalizer" *ngIf="currentSong?.id === song.id && isPlaying">
+          <span class="eq-bar eq-bar-1"></span>
+          <span class="eq-bar eq-bar-2"></span>
+          <span class="eq-bar eq-bar-3"></span>
+        </div>
+        <span *ngIf="!(currentSong?.id === song.id && isPlaying)">{{ song.id }}</span>
+      </div>
       <ion-label>
-        <h2>{{ song.url }}</h2>
-        <p>{{ song.artist }}</p>
+        <h3 class="song-title">{{ song.url }}</h3>
+        <p class="song-artist">{{ song.artist }}</p>
       </ion-label>
+      <div class="song-duration" slot="end">{{ formatTime(song.duration) }}</div>
     </ion-item>
   </ion-list>
-
-  <!-- Reproductor de música -->
-  <ion-card *ngIf="currentSong" class="player-card">
-    <ion-card-header>
-      <ion-card-title class="player-title-song">{{ currentSong.url }}</ion-card-title>
-      <ion-card-subtitle>{{ currentSong.artist }}</ion-card-subtitle>
-    </ion-card-header>
-
-    <ion-card-content class="player-controls">
-      <!-- Barra de progreso -->
-      <ion-range min="0" [max]="duration" [(ngModel)]="currentTime" (ionChange)="seekAudio()"></ion-range>
-
-      <!-- Botones de control -->
-      <div class="controls">
-        <ion-button (click)="toggleShuffle()">
-          <ion-icon [name]="isShuffle ? 'shuffle' : 'shuffle-outline'"></ion-icon>
-        </ion-button>
-
-        <ion-button fill="clear" (click)="prevSong()">
-          <ion-icon name="play-skip-back-outline"></ion-icon>
-        </ion-button>
-
-        <ion-button fill="clear" (click)="togglePlayPause()">
-          <ion-icon *ngIf="isPlaying" name="pause-circle-outline"></ion-icon>
-          <ion-icon *ngIf="!isPlaying" name="play-circle-outline"></ion-icon>
-        </ion-button>
-
-        <ion-button fill="clear" (click)="nextSong()">
-          <ion-icon name="play-skip-forward-outline"></ion-icon>
-        </ion-button>
-
-        <ion-button (click)="toggleLoop()">
-          <ion-icon [name]="loopMode === 'all' ? 'repeat' : loopMode === 'one' ? 'repeat-outline' : 'repeat-outline'"></ion-icon>
-        </ion-button>
-
-        <ion-range min="0" max="1" step="0.1" [(ngModel)]="volume" (ionChange)="setVolume()">
-          <ion-icon slot="start" name="volume-mute-outline"></ion-icon>
-          <ion-icon slot="end" name="volume-high-outline"></ion-icon>
-        </ion-range>
-      </div>
-    </ion-card-content>
-  </ion-card>
 </ion-content>
+
+<!-- Reproductor de música -->
+<app-music-player 
+  *ngIf="currentSong" 
+  [song]="currentSong" 
+  [isPlaying]="isPlaying"
+  (playPauseToggle)="togglePlayPause($event)"
+  (nextSongEvent)="nextSong()"
+  (prevSongEvent)="prevSong()">
+</app-music-player>
+
+<!-- Navegación inferior -->
+<ion-tab-bar slot="bottom" class="footer-tabs">
+  <ion-tab-button tab="home" selected>
+    <ion-icon name="home"></ion-icon>
+    <ion-label>Inicio</ion-label>
+  </ion-tab-button>
+  <ion-tab-button tab="search">
+    <ion-icon name="search"></ion-icon>
+    <ion-label>Buscar</ion-label>
+  </ion-tab-button>
+  <ion-tab-button tab="library">
+    <ion-icon name="library"></ion-icon>
+    <ion-label>Biblioteca</ion-label>
+  </ion-tab-button>
+  <ion-tab-button tab="create">
+    <ion-icon name="add-circle"></ion-icon>
+    <ion-label>Crear</ion-label>
+  </ion-tab-button>
+</ion-tab-bar>
+

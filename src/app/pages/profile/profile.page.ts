@@ -106,10 +106,9 @@ export class ProfilePage implements OnInit {
           (response: any) => {
             console.log('Canción convertida y guardada:', response);
             if (response.song) {
-              // Añadir la canción a la lista de canciones descargadas
               this.downloadedSongs.push({
                 title: response.song.title,
-                artist: response.song.artist,  // Puedes ajustar esto según el backend
+                artist: response.song.artist,  
                 url: response.song,
               });
             }
@@ -140,5 +139,10 @@ export class ProfilePage implements OnInit {
   logout() {
     localStorage.removeItem('access_token');
     this.navCtrl.navigateRoot('/auth');  // Redirige a la página de login
+  }
+
+  home(){
+    
+    this.navCtrl.navigateForward('/home');
   }
 }

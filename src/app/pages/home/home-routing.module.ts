@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: HomePage
+  },
+  {
+    path: '',
+    loadComponent: () => import('./home.page').then(m => m.HomePage)
   }
 ];
 

@@ -1,75 +1,80 @@
-
-ion-title {
-    font-size: 1.4rem;
-    color: #d4af37; // Oro metálico
-    text-shadow: 0px 0px 10px rgba(255, 215, 0, 0.6);
-  }
-  
-
-ion-item {
-    --background: transparent;
-    --color: #ffffff;
-    --border-color: linear-gradient(90deg, #d4af37, #aaa);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-    margin: 12px 0;
-}
-  
-  // Placeholder con tono plateado
-ion-input::placeholder {
-    color: rgba(200, 200, 200, 0.7);
-}
-  
-  // ✨ Botones con efecto metálico glossy
-ion-button {
-    --background: linear-gradient(145deg, #d4af37, #b8860b);
-    color: black;
-    font-weight: bold;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(255, 215, 0, 0.4);
-    transition: 0.3s;
-}
-  
-ion-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0px 4px 15px rgba(255, 215, 0, 0.8);
-}
-  
-  // 🎛 Segmento de Login/Register con colores metálicos
-ion-segment {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    margin-bottom: 15px;
-}
-  
-ion-segment-button {
-    color: white;
-}
-  
-ion-segment-button.ion-activated {
-    background: linear-gradient(145deg, #d4af37, #b8860b);
-    color: black;
-    font-weight: bold;
+.auth-bg {
+  --background: linear-gradient(135deg, #000000, #1a1a1a);
 }
 
-ion-content {
-    --background: linear-gradient(135deg, #1a1a1a, #303030);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;  // Asegura que ocupe toda la pantalla
-}
-  
 .auth-container {
-    width: 90%;
-    max-width: 400px;
-    padding: 20px;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    box-shadow: 0px 4px 20px rgba(255, 215, 0, 0.2);
-    text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    display: flex;
-    flex-direction: column;
-} 
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}
+
+.title-container {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.app-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  background: linear-gradient(to right, #a855f7, #22d3ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.app-subtitle {
+  color: #a3a3a3;
+}
+
+.auth-card {
+  background: rgba(24, 24, 27, 0.7);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(63, 63, 70, 0.5);
+}
+
+.segment-container {
+  border-bottom: 1px solid rgba(63, 63, 70, 0.5);
+}
+
+.auth-segment {
+  --background: transparent;
+}
+
+ion-segment-button {
+  --color: #a3a3a3;
+  --color-checked: #a855f7;
+  --indicator-color: rgba(168, 85, 247, 0.2);
+}
+
+.form-container {
+  padding: 1.5rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-input {
+  --background: rgba(39, 39, 42, 0.5);
+  --border-color: rgba(63, 63, 70, 0.5);
+  --border-radius: 8px;
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+  --highlight-color-focused: #a855f7;
+}
+
+.auth-button {
+  --background: linear-gradient(to right, #9333ea, #06b6d4);
+  --border-radius: 8px;
+  margin-top: 1rem;
+  font-weight: 500;
+  height: 48px;
+}
+

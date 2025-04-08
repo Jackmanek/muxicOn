@@ -1,0 +1,54 @@
+<div class="player-container" [class.expanded]="isExpanded">
+  <div class="player-header" (click)="toggleExpand()">
+    <div class="song-thumbnail">
+      <div class="song-equalizer" *ngIf="isPlaying">
+        <span class="eq-bar eq-bar-1"></span>
+        <span class="eq-bar eq-bar-2"></span>
+        <span class="eq-bar eq-bar-3"></span>
+      </div>
+    </div>
+    <div class="song-info">
+      <div class="song-title">{{ song.url || song.url }}</div>
+      <div class="song-artist">{{ song.artist }}</div>
+    </div>
+    <button class="play-button" (click)="togglePlayPause($event)">
+      <ion-icon [name]="isPlaying ? 'pause' : 'play'"></ion-icon>
+    </button>
+  </div>
+
+  <div class="progress-container">
+    <span class="time-current">{{ formatTime(currentTime) }}</span>
+    <ion-range [(ngModel)]="currentTime" min="0" [max]="duration" (ionChange)="seekAudio()" class="progress-bar">
+    </ion-range>
+    <span class="time-total">{{ formatTime(duration) }}</span>
+  </div>
+
+  <div class="expanded-controls" *ngIf="isExpanded">
+    <div class="controls-row">
+      <button [class.active]="isShuffle" (click)="toggleShuffle()" class="control-button">
+        <ion-icon name="shuffle"></ion-icon>
+      </button>
+      <button (click)="prevSong()" class="control-button">
+        <ion-icon name="play-skip-back"></ion-icon>
+      </button>
+      <button class="main-play-button" (click)="togglePlayPause($event)">
+        <ion-icon [name]="isPlaying ? 'pause' : 'play'"></ion-icon>
+      </button>
+      <button (click)="nextSong()" class="control-button">
+        <ion-icon name="play-skip-forward"></ion-icon>
+      </button>
+      <button [class.active]="loopMode !== 'none'" (click)="toggleLoop()" class="control-button">
+        <ion-icon name="repeat"></ion-icon>
+        <span *ngIf="loopMode === 'one'" class="loop-one">1</span>
+      </button>
+    </div>
+
+    <div class="volume-container">
+      <ion-icon [name]="isMuted || volume === 0 ? 'volume-mute' : 'volume-high'" (click)="toggleMute()"></ion-icon>
+      <ion-range [(ngModel)]="volume" min="0" max="1" step="0.01" (ionChange)="setVolume()" class="volume-slider">
+      </ion-range>
+    </div>
+  </div>
+</div>
+
+

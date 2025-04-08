@@ -1,19 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { SongService } from '../../services/song.service';
 import { Router } from '@angular/router';
+import { MusicPlayerComponent } from 'src/app/components/music-player/music-player.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule]
+  imports: [CommonModule, IonicModule, FormsModule, MusicPlayerComponent]
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   songs: any[] = [];
   currentSongIndex: number = 0;
   currentSong: any = null;
@@ -25,15 +26,56 @@ export class HomePage implements OnInit {
   loopMode: string = 'none';
   volume: number = 1;
   apiUrl = 'http://127.0.0.1:8000/api/';
+  showPlayMessage: boolean = false;
+  audioUpdateInterval: any = null;
+  userInteracted: boolean = false;
 
-  constructor(private http: HttpClient, private songsService: SongService, private router: Router) {}
+  constructor(
+    private http: HttpClient, 
+    private songsService: SongService, 
+    private router: Router,
+    private toastController: ToastController
+  ) {}
 
   ngOnInit() {
+    this.setupAudioPlayer();
     this.getSongs();
-    this.audioPlayer = new Audio(); 
-    this.audioPlayer.addEventListener('timeupdate', this.updateProgressBar.bind(this));
+    
+    // Detectar interacción del usuario con la página
+    document.addEventListener('click', () => {
+      this.userInteracted = true;
+    });
+  }
+
+  ngOnDestroy() {
+    // Limpiar recursos al destruir el componente
+    if (this.audioPlayer) {
+      this.audioPlayer.pause();
+      this.audioPlayer.src = '';
+      this.audioPlayer.removeEventListener('timeupdate', this.updateProgressBar.bind(this));
+      this.audioPlayer.removeEventListener('ended', this.handleSongEnd.bind(this));
+    }
+    
+    if (this.audioUpdateInterval) {
+      clearInterval(this.audioUpdateInterval);
+    }
+  }
+
+  setupAudioPlayer() {
+    this.audioPlayer = new Audio();
     this.audioPlayer.volume = this.volume;
     
+    // Configurar eventos del reproductor de audio
+    this.audioPlayer.addEventListener('timeupdate', this.updateProgressBar.bind(this));
+    this.audioPlayer.addEventListener('ended', this.handleSongEnd.bind(this));
+    this.audioPlayer.addEventListener('loadedmetadata', () => {
+      this.duration = this.audioPlayer.duration;
+    });
+    
+    this.audioPlayer.addEventListener('error', (e) => {
+      console.error('Error de audio:', e);
+      this.presentToast('Error al reproducir la canción. Intenta de nuevo.');
+    });
   }
 
   getSongs() {
@@ -41,66 +83,178 @@ export class HomePage implements OnInit {
       (data: any) => {
         this.songs = data;
         if (this.songs.length > 0) {
-          this.currentSong = this.songs[0]; 
-          setTimeout(() => {
-            this.playSong(this.currentSong);  
-          }, 500);
+          this.currentSong = this.songs[0];
+          this.currentSongIndex = 0;
+          
+          // Preparar el audio pero no reproducir automáticamente
+          this.prepareAudio(this.currentSong);
         }
       },
       (error) => {
         console.error('Error al obtener canciones', error);
+        this.presentToast('No se pudieron cargar las canciones. Verifica tu conexión.');
       }
     );
   }
 
-  playSong(song: any) {
+  prepareAudio(song: any) {
+    if (!song) return;
+    
+    const filePath = encodeURI(`http://127.0.0.1:8000${song.file}`);
+    
+    // Solo preparamos el audio sin reproducirlo
+    this.audioPlayer.src = filePath;
+    this.audioPlayer.load();
+    
+    // Mostrar mensaje para que el usuario interactúe
+    if (!this.userInteracted) {
+      this.presentToast('Toca el botón de reproducción para escuchar la música');
+    }
+  }
+
+  async playSong(song: any) {
+    // Si es la misma canción, solo toggle play/pause
+    if (this.currentSong && this.currentSong.id === song.id) {
+      this.togglePlayPause(!this.isPlaying);
+      return;
+    }
+    
     this.currentSong = song;
     this.currentSongIndex = this.songs.findIndex(s => s.id === song.id);
     const filePath = encodeURI(`http://127.0.0.1:8000${song.file}`);
 
-    if (this.audioPlayer) {
-      this.audioPlayer.pause(); 
+    try {
+      // Pausar reproducción actual
+      this.audioPlayer.pause();
+      
+      // Configurar nueva fuente
       this.audioPlayer.src = filePath;
-      this.audioPlayer.load();  
-      this.audioPlayer.play().catch(error => console.error("Error al reproducir audio:", error));
-      this.isPlaying = true;
+      this.audioPlayer.load();
+      
+      // Intentar reproducir
+      const playPromise = this.audioPlayer.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          // Reproducción exitosa
+          this.isPlaying = true;
+        }).catch(error => {
+          console.error("Error al reproducir audio:", error);
+          this.isPlaying = false;
+          
+          if (error.name === 'NotAllowedError') {
+            this.presentToast('Toca el botón de reproducción para escuchar la música');
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error al configurar audio:", error);
+      this.isPlaying = false;
+      this.presentToast('Error al reproducir la canción');
     }
   }
 
-  togglePlayPause() {
-    if (this.isPlaying) {
-      this.audioPlayer.pause();
-    } else {
-      this.audioPlayer.play();
+  togglePlayPause(playing: boolean) {
+    console.log('togglePlayPause called with:', playing);
+    
+    // Si no hay canción actual, seleccionar la primera
+    if (!this.currentSong && this.songs.length > 0) {
+      this.playSong(this.songs[0]);
+      return;
     }
-    this.isPlaying = !this.isPlaying;
+    
+    // Corregimos la lógica: playing indica el estado DESEADO
+    if (playing) {
+      // Queremos reproducir
+      try {
+        const playPromise = this.audioPlayer.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            this.isPlaying = true;
+          }).catch(error => {
+            console.error("Error al reproducir:", error);
+            this.isPlaying = false;
+            
+            if (error.name === 'NotAllowedError') {
+              this.presentToast('Toca el botón de reproducción para escuchar la música');
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error al reproducir:", error);
+        this.isPlaying = false;
+      }
+    } else {
+      // Queremos pausar
+      this.audioPlayer.pause();
+      this.isPlaying = false;
+    }
   }
 
   prevSong() {
-    if (this.currentSongIndex > 0) {
-      this.currentSongIndex--;
+    let newIndex;
+    
+    if (this.isShuffle) {
+      // Modo aleatorio
+      newIndex = Math.floor(Math.random() * this.songs.length);
     } else {
-      this.currentSongIndex = this.songs.length - 1;
+      // Modo normal
+      if (this.currentSongIndex > 0) {
+        newIndex = this.currentSongIndex - 1;
+      } else {
+        newIndex = this.songs.length - 1;
+      }
     }
-    this.playSong(this.songs[this.currentSongIndex]);
+    
+    this.playSong(this.songs[newIndex]);
   }
 
   nextSong() {
-    if (this.currentSongIndex < this.songs.length - 1) {
-      this.currentSongIndex++;
+    let newIndex;
+    
+    if (this.isShuffle) {
+      // Modo aleatorio
+      newIndex = Math.floor(Math.random() * this.songs.length);
     } else {
-      this.currentSongIndex = 0;
+      // Modo normal
+      if (this.currentSongIndex < this.songs.length - 1) {
+        newIndex = this.currentSongIndex + 1;
+      } else {
+        newIndex = 0;
+      }
     }
-    this.playSong(this.songs[this.currentSongIndex]);
+    
+    this.playSong(this.songs[newIndex]);
+  }
+
+  handleSongEnd() {
+    // Cuando termina una canción
+    if (this.loopMode === 'one') {
+      // Repetir la misma canción
+      this.audioPlayer.currentTime = 0;
+      this.audioPlayer.play().catch(err => console.error('Error al repetir canción:', err));
+    } else if (this.loopMode === 'all' || this.isShuffle) {
+      // Pasar a la siguiente canción
+      this.nextSong();
+    } else {
+      // Sin repetición, si es la última canción, detener
+      if (this.currentSongIndex >= this.songs.length - 1) {
+        this.isPlaying = false;
+      } else {
+        this.nextSong();
+      }
+    }
   }
 
   updateProgressBar() {
     this.currentTime = this.audioPlayer.currentTime;
-    this.duration = this.audioPlayer.duration;
+    this.duration = this.audioPlayer.duration || 0;
   }
 
   seekAudio() {
-    this.audioPlayer.currentTime = this.currentTime;
+    if (this.audioPlayer) {
+      this.audioPlayer.currentTime = this.currentTime;
+    }
   }
 
   goToProfile() {
@@ -111,7 +265,6 @@ export class HomePage implements OnInit {
     this.isShuffle = !this.isShuffle;
     console.log("Modo aleatorio:", this.isShuffle);
   }
-
 
   toggleLoop() {
     if (this.loopMode === 'none') {
@@ -127,9 +280,34 @@ export class HomePage implements OnInit {
     console.log("Modo de repetición:", this.loopMode);
   }
 
-
   setVolume() {
-    this.audioPlayer.volume = this.volume;
+    if (this.audioPlayer) {
+      this.audioPlayer.volume = this.volume;
+    }
     console.log("Volumen:", this.volume);
+  }
+
+  formatTime(seconds: number): string {
+    if (isNaN(seconds) || seconds < 0) return "0:00";
+    
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  }
+
+  async presentToast(message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 3000,
+      position: 'middle',
+      buttons: [
+        {
+          text: 'OK',
+          role: 'cancel'
+        }
+      ]
+    });
+    
+    await toast.present();
   }
 }
