@@ -29,6 +29,8 @@ export class HomePage implements OnInit, OnDestroy {
   showPlayMessage: boolean = false;
   audioUpdateInterval: any = null;
   userInteracted: boolean = false;
+  searchTerm: string = '';
+  allSongs: any[] = [];
 
   constructor(
     private http: HttpClient, 
@@ -81,18 +83,36 @@ export class HomePage implements OnInit, OnDestroy {
   getSongs() {
     this.songsService.getSongs().subscribe(
       (data: any) => {
-        this.songs = data;
+        this.allSongs = data;
+        this.songs = [...this.allSongs];
         if (this.songs.length > 0) {
           this.currentSong = this.songs[0];
           this.currentSongIndex = 0;
-          
-          // Preparar el audio pero no reproducir automáticamente
           this.prepareAudio(this.currentSong);
         }
       },
       (error) => {
         console.error('Error al obtener canciones', error);
         this.presentToast('No se pudieron cargar las canciones. Verifica tu conexión.');
+      }
+    );
+  }
+
+  filterSongs() {
+    const term = this.searchTerm.trim();
+    
+    if (term === '') {
+      this.songs = [...this.allSongs]; // Vuelve al cache local si no hay término
+      return;
+    }
+  
+    this.songsService.searchSongs(term).subscribe(
+      (results: any) => {
+        this.songs = results;
+      },
+      (error) => {
+        console.error("Error al buscar canciones:", error);
+        this.presentToast('Error al buscar canciones');
       }
     );
   }

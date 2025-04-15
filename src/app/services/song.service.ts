@@ -23,4 +23,7 @@ export class SongService {
       throw new Error('No token found');
     }
   }
+  searchSongs(query: string) {
+    return this.http.get(`http://127.0.0.1:8000/api/songs/search/?q=${encodeURIComponent(query)}`);
+  }
 }

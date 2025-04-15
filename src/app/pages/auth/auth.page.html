@@ -11,9 +11,15 @@
           <ion-segment-button value="login">
             <ion-label>Login</ion-label>
           </ion-segment-button>
+          <ion-text color="danger" *ngIf="loginError">
+            <p class="ion-padding-start">{{ loginError }}</p>
+          </ion-text>
           <ion-segment-button value="register">
             <ion-label>Registro</ion-label>
           </ion-segment-button>
+          <ion-text color="danger" *ngIf="registerError">
+            <p class="ion-padding-start">{{ registerError }}</p>
+          </ion-text>          
         </ion-segment>
       </div>
 
