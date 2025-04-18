@@ -14,11 +14,11 @@ import { NavController } from '@ionic/angular';
 })
 export class ProfilePage implements OnInit {
   downloadedSongs: any[] = [];
-  token: string | null = null; 
-  newSongUrl: string = ''; 
+  token: string | null = null;
+  newSongUrl: string = '';
   apiUrl = 'http://127.0.0.1:8000/api/';
-  isConverting: boolean = false;  
-  progressValue: number = 0;  
+  isConverting: boolean = false;
+  progressValue: number = 0;
 
   constructor(private http: HttpClient, private navCtrl: NavController) {}
 
@@ -108,14 +108,14 @@ export class ProfilePage implements OnInit {
             if (response.song) {
               this.downloadedSongs.push({
                 title: response.song.title,
-                artist: response.song.artist,  
+                artist: response.song.artist,
                 url: response.song,
               });
             }
 
             this.isConverting = false;
-            this.progressValue = 1;  
-            this.newSongUrl = '';  
+            this.progressValue = 1;
+            this.newSongUrl = '';
           },
           (error) => {
             console.error('Error al convertir y guardar la canción:', error);
@@ -142,7 +142,7 @@ export class ProfilePage implements OnInit {
   }
 
   home(){
-    
+
     this.navCtrl.navigateForward('/home');
   }
 }

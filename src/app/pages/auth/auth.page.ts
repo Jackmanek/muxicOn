@@ -12,14 +12,14 @@ import { IonicModule, NavController } from '@ionic/angular';
   imports: [CommonModule, IonicModule, FormsModule]
 })
 export class AuthPage  {
-  
+
   authMode: string = 'login';
   loginData = { username: '', password: ''};
   registerData = {username: '', password: '' };
   apiUrl = 'http://127.0.0.1:8000/api/';
   loginError: string | null = null;
   registerError: string | null = null;
-  
+
   constructor(private http: HttpClient, private navCtrl: NavController) { }
 
   login(){
@@ -42,9 +42,9 @@ export class AuthPage  {
   }
   register(){
     this.registerError = null;
-    
+
     this.http.post(this.apiUrl + 'register/', this.registerData, {
-      headers: { 'Content-Type': 'application/json' } 
+      headers: { 'Content-Type': 'application/json' }
     }).subscribe(
       () => {
         alert('Registro exitoso, ahora inicia sesión.');

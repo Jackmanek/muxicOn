@@ -33,8 +33,8 @@ export class HomePage implements OnInit, OnDestroy {
   allSongs: any[] = [];
 
   constructor(
-    private http: HttpClient, 
-    private songsService: SongService, 
+    private http: HttpClient,
+    private songsService: SongService,
     private router: Router,
     private toastController: ToastController
   ) {}
@@ -42,7 +42,7 @@ export class HomePage implements OnInit, OnDestroy {
   ngOnInit() {
     this.setupAudioPlayer();
     this.getSongs();
-    
+
     // Detectar interacción del usuario con la página
     document.addEventListener('click', () => {
       this.userInteracted = true;
@@ -57,7 +57,7 @@ export class HomePage implements OnInit, OnDestroy {
       this.audioPlayer.removeEventListener('timeupdate', this.updateProgressBar.bind(this));
       this.audioPlayer.removeEventListener('ended', this.handleSongEnd.bind(this));
     }
-    
+
     if (this.audioUpdateInterval) {
       clearInterval(this.audioUpdateInterval);
     }
@@ -66,14 +66,14 @@ export class HomePage implements OnInit, OnDestroy {
   setupAudioPlayer() {
     this.audioPlayer = new Audio();
     this.audioPlayer.volume = this.volume;
-    
+
     // Configurar eventos del reproductor de audio
     this.audioPlayer.addEventListener('timeupdate', this.updateProgressBar.bind(this));
     this.audioPlayer.addEventListener('ended', this.handleSongEnd.bind(this));
     this.audioPlayer.addEventListener('loadedmetadata', () => {
       this.duration = this.audioPlayer.duration;
     });
-    
+
     this.audioPlayer.addEventListener('error', (e) => {
       console.error('Error de audio:', e);
       this.presentToast('Error al reproducir la canción. Intenta de nuevo.');
@@ -100,12 +100,12 @@ export class HomePage implements OnInit, OnDestroy {
 
   filterSongs() {
     const term = this.searchTerm.trim();
-    
+
     if (term === '') {
       this.songs = [...this.allSongs]; // Vuelve al cache local si no hay término
       return;
     }
-  
+
     this.songsService.searchSongs(term).subscribe(
       (results: any) => {
         this.songs = results;
@@ -119,13 +119,13 @@ export class HomePage implements OnInit, OnDestroy {
 
   prepareAudio(song: any) {
     if (!song) return;
-    
+
     const filePath = encodeURI(`http://127.0.0.1:8000${song.file}`);
-    
+
     // Solo preparamos el audio sin reproducirlo
     this.audioPlayer.src = filePath;
     this.audioPlayer.load();
-    
+
     // Mostrar mensaje para que el usuario interactúe
     if (!this.userInteracted) {
       this.presentToast('Toca el botón de reproducción para escuchar la música');
@@ -138,7 +138,7 @@ export class HomePage implements OnInit, OnDestroy {
       this.togglePlayPause(!this.isPlaying);
       return;
     }
-    
+
     this.currentSong = song;
     this.currentSongIndex = this.songs.findIndex(s => s.id === song.id);
     const filePath = encodeURI(`http://127.0.0.1:8000${song.file}`);
@@ -146,14 +146,14 @@ export class HomePage implements OnInit, OnDestroy {
     try {
       // Pausar reproducción actual
       this.audioPlayer.pause();
-      
+
       // Configurar nueva fuente
       this.audioPlayer.src = filePath;
       this.audioPlayer.load();
-      
+
       // Intentar reproducir
       const playPromise = this.audioPlayer.play();
-      
+
       if (playPromise !== undefined) {
         playPromise.then(() => {
           // Reproducción exitosa
@@ -161,7 +161,7 @@ export class HomePage implements OnInit, OnDestroy {
         }).catch(error => {
           console.error("Error al reproducir audio:", error);
           this.isPlaying = false;
-          
+
           if (error.name === 'NotAllowedError') {
             this.presentToast('Toca el botón de reproducción para escuchar la música');
           }
@@ -176,13 +176,13 @@ export class HomePage implements OnInit, OnDestroy {
 
   togglePlayPause(playing: boolean) {
     console.log('togglePlayPause called with:', playing);
-    
+
     // Si no hay canción actual, seleccionar la primera
     if (!this.currentSong && this.songs.length > 0) {
       this.playSong(this.songs[0]);
       return;
     }
-    
+
     // Corregimos la lógica: playing indica el estado DESEADO
     if (playing) {
       // Queremos reproducir
@@ -194,7 +194,7 @@ export class HomePage implements OnInit, OnDestroy {
           }).catch(error => {
             console.error("Error al reproducir:", error);
             this.isPlaying = false;
-            
+
             if (error.name === 'NotAllowedError') {
               this.presentToast('Toca el botón de reproducción para escuchar la música');
             }
@@ -213,7 +213,7 @@ export class HomePage implements OnInit, OnDestroy {
 
   prevSong() {
     let newIndex;
-    
+
     if (this.isShuffle) {
       // Modo aleatorio
       newIndex = Math.floor(Math.random() * this.songs.length);
@@ -225,13 +225,13 @@ export class HomePage implements OnInit, OnDestroy {
         newIndex = this.songs.length - 1;
       }
     }
-    
+
     this.playSong(this.songs[newIndex]);
   }
 
   nextSong() {
     let newIndex;
-    
+
     if (this.isShuffle) {
       // Modo aleatorio
       newIndex = Math.floor(Math.random() * this.songs.length);
@@ -243,7 +243,7 @@ export class HomePage implements OnInit, OnDestroy {
         newIndex = 0;
       }
     }
-    
+
     this.playSong(this.songs[newIndex]);
   }
 
@@ -309,7 +309,7 @@ export class HomePage implements OnInit, OnDestroy {
 
   formatTime(seconds: number): string {
     if (isNaN(seconds) || seconds < 0) return "0:00";
-    
+
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
@@ -327,7 +327,7 @@ export class HomePage implements OnInit, OnDestroy {
         }
       ]
     });
-    
+
     await toast.present();
   }
 }
