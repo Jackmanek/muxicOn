@@ -21,6 +21,19 @@ const routes: Routes = [
     path: 'home',
     loadChildren: () => import('./pages/home/home-routing.module').then(m => m.HomePageRoutingModule)
   },
+  {
+    path: 'playlists',
+    loadChildren: () => import('./pages/playlists/playlists.module').then( m => m.PlaylistsPageModule)
+  },
+  {
+    path: 'playlist-detail',
+    loadChildren: () => import('./pages/playlist-detail/playlist-detail.module').then( m => m.PlaylistDetailPageModule)
+  },
+  {
+    path: 'playlist/:id',
+    loadChildren: () => import('./pages/playlist-detail/playlist-detail.module').then(m => m.PlaylistDetailPageModule)
+  },
+
 ];
 
 @NgModule({

@@ -6,6 +6,7 @@ import { IonicModule, ToastController } from '@ionic/angular';
 import { SongService } from '../../services/song.service';
 import { Router } from '@angular/router';
 import { MusicPlayerComponent } from 'src/app/components/music-player/music-player.component';
+import { PlaylistsPage } from '../playlists/playlists.page';
 
 @Component({
   selector: 'app-home',
@@ -279,6 +280,9 @@ export class HomePage implements OnInit, OnDestroy {
 
   goToProfile() {
     this.router.navigate(['/profile']);
+  }
+  loadPlaylists(){
+    this.router.navigate(['/playlists']);
   }
 
   toggleShuffle() {

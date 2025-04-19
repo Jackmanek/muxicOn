@@ -15,10 +15,10 @@
   <!-- Barra de búsqueda -->
   <div class="search-container">
     <ion-icon name="search-outline" class="search-icon"></ion-icon>
-    <ion-input 
-      [(ngModel)]="searchTerm" 
-      (ionInput)="filterSongs()" 
-      placeholder="Buscar canciones, artistas..." 
+    <ion-input
+      [(ngModel)]="searchTerm"
+      (ionInput)="filterSongs()"
+      placeholder="Buscar canciones, artistas..."
       class="search-input">
     </ion-input>
   </div>
@@ -45,9 +45,9 @@
 </ion-content>
 
 <!-- Reproductor de música -->
-<app-music-player 
-  *ngIf="currentSong" 
-  [song]="currentSong" 
+<app-music-player
+  *ngIf="currentSong"
+  [song]="currentSong"
   [isPlaying]="isPlaying"
   (playPauseToggle)="togglePlayPause($event)"
   (nextSongEvent)="nextSong()"
@@ -68,7 +68,7 @@
     <ion-icon name="library"></ion-icon>
     <ion-label>Biblioteca</ion-label>
   </ion-tab-button>
-  <ion-tab-button tab="create">
+  <ion-tab-button tab="create" (click)="loadPlaylists()">
     <ion-icon name="add-circle"></ion-icon>
     <ion-label>Crear</ion-label>
   </ion-tab-button>

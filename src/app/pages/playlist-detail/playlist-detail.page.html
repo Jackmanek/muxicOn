@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/playlists"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ playlist?.name }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let song of songs">
+      <ion-label>
+        <h2>{{ song.title }}</h2>
+        <p>{{ song.artist }}</p>
+      </ion-label>
+      <ion-button fill="clear" color="danger" slot="end" (click)="removeSong(song.id)">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
