@@ -41,6 +41,11 @@ export class PlaylistsPage implements OnInit {
   }
 
   async openNewPlaylistPrompt() {
+    const token = localStorage.getItem('access_token');
+    if(!token){
+      console.error('Token no disponible, el usuario no esta autenticado');
+      return;
+    }
     const alert = await this.alertCtrl.create({
       header: 'Nueva Playlist',
       inputs: [

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -10,39 +10,38 @@ export class PlaylistService {
 
   constructor(private http: HttpClient) {}
 
-  getPlaylists(): Observable<any[]> {
+  private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('access_token');
-    const headers = { Authorization: `Bearer ${token}` };
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  }
+
+  getPlaylists(): Observable<any[]> {
+    const headers = this.getHeaders();
     return this.http.get<any[]>(`${this.baseUrl}/playlists/`, { headers });
   }
 
   createPlaylist(name: string): Observable<any> {
-    const token = localStorage.getItem('access_token');
-    const headers = { Authorization: `Bearer ${token}` };
-    return this.http.post<any>(`${this.baseUrl}/playlists/create/`, { name });
+    const headers = this.getHeaders();
+    return this.http.post<any>(`${this.baseUrl}/playlists/create/`, { name }, {headers});
   }
 
   deletePlaylist(id: number): Observable<any> {
-    const token = localStorage.getItem('access_token');
-    const headers = { Authorization: `Bearer ${token}` };
-    return this.http.delete<any>(`${this.baseUrl}/playlists/${id}/delete/`);
+    const headers = this.getHeaders();
+    return this.http.delete<any>(`${this.baseUrl}/playlists/${id}/delete/`, {headers});
   }
 
   getPlaylistSongs(id: number): Observable<any[]> {
-    const token = localStorage.getItem('access_token');
-    const headers = { Authorization: `Bearer ${token}` };
-    return this.http.get<any[]>(`${this.baseUrl}/playlists/${id}/songs/`);
+    const headers = this.getHeaders();
+    return this.http.get<any[]>(`${this.baseUrl}/playlists/${id}/songs/`, {headers});
   }
 
   addSongToPlaylist(playlistId: number, songId: number): Observable<any> {
-    const token = localStorage.getItem('access_token');
-    const headers = { Authorization: `Bearer ${token}` };
-    return this.http.post<any>(`${this.baseUrl}/playlists/${playlistId}/add-song/`, { song_id: songId });
+    const headers = this.getHeaders();
+    return this.http.post<any>(`${this.baseUrl}/playlists/${playlistId}/add-song/`, { song_id: songId }, {headers});
   }
 
   removeSongFromPlaylist(playlistId: number, songId: number): Observable<any> {
-    const token = localStorage.getItem('access_token');
-    const headers = { Authorization: `Bearer ${token}` };
-    return this.http.post<any>(`${this.baseUrl}/playlists/${playlistId}/remove-song/`, { song_id: songId });
+    const headers = this.getHeaders();
+    return this.http.post<any>(`${this.baseUrl}/playlists/${playlistId}/remove-song/`, { song_id: songId }, {headers});
   }
 }
