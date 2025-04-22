@@ -27,7 +27,7 @@ export class PlaylistService {
 
   deletePlaylist(id: number): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.delete<any>(`${this.baseUrl}/playlists/${id}/delete/`, {headers});
+    return this.http.delete<any>(`${this.baseUrl}/playlists/delete/${id}/`, {headers});
   }
 
   getPlaylistSongs(id: number): Observable<any[]> {
@@ -43,5 +43,9 @@ export class PlaylistService {
   removeSongFromPlaylist(playlistId: number, songId: number): Observable<any> {
     const headers = this.getHeaders();
     return this.http.post<any>(`${this.baseUrl}/playlists/${playlistId}/remove-song/`, { song_id: songId }, {headers});
+  }
+  reorderPlaylistSongs(playlistId: number, songIds: number[]): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.post<any>(`${this.baseUrl}/playlists/${playlistId}/reorder/`, { song_ids: songIds }, { headers });
   }
 }

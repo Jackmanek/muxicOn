@@ -4,20 +4,37 @@
       <ion-back-button defaultHref="/playlists"></ion-back-button>
     </ion-buttons>
     <ion-title>{{ playlist?.name }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openAddSongModal()">
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="toggleReordering()">
+        <ion-icon name="reorder-four-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <ion-item *ngFor="let song of songs">
-      <ion-label>
-        <h2>{{ song.title }}</h2>
-        <p>{{ song.artist }}</p>
-      </ion-label>
-      <ion-button fill="clear" color="danger" slot="end" (click)="removeSong(song.id)">
-        <ion-icon name="trash-outline"></ion-icon>
-      </ion-button>
-    </ion-item>
+    <ion-reorder-group [disabled]="!reordering" (ionItemReorder)="handleReorder($event)">
+      <ion-item *ngFor="let song of songs">
+        <ion-label>
+          <h2>{{ song.title }}</h2>
+          <p>{{ song.artist }}</p>
+        </ion-label>
+        <ion-button fill="clear" color="danger" slot="end" (click)="removeSong(song.id)" *ngIf="!reordering">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+        <ion-reorder slot="end" *ngIf="reordering"></ion-reorder>
+      </ion-item>
+    </ion-reorder-group>
   </ion-list>
-</ion-content>
 
+  <div class="empty-state" *ngIf="songs.length === 0" style="text-align: center; margin-top: 100px;">
+    <ion-text color="medium">
+      <h5>Esta playlist está vacía</h5>
+      <p>Añade canciones usando el botón +</p>
+    </ion-text>
+  </div>
+</ion-content>
