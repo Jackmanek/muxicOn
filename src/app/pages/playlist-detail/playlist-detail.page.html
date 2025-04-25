@@ -18,7 +18,7 @@
 <ion-content>
   <ion-list>
     <ion-reorder-group [disabled]="!reordering" (ionItemReorder)="handleReorder($event)">
-      <ion-item *ngFor="let song of songs">
+      <ion-item *ngFor="let song of songs" (click)="playSong(song)">
         <ion-label>
           <h2>{{ song.title }}</h2>
           <p>{{ song.artist }}</p>
@@ -30,6 +30,16 @@
       </ion-item>
     </ion-reorder-group>
   </ion-list>
+
+  <!-- Reproductor de música -->
+  <app-music-player
+    *ngIf="currentSong"
+    [song]="currentSong"
+    [isPlaying]="isPlaying"
+    (playPauseToggle)="togglePlayPause($event)"
+    (nextSongEvent)="nextSong()"
+    (prevSongEvent)="prevSong()">
+  </app-music-player>
 
   <div class="empty-state" *ngIf="songs.length === 0" style="text-align: center; margin-top: 100px;">
     <ion-text color="medium">
