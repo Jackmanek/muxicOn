@@ -11,10 +11,10 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(username: string, password: string): Observable<any> {
-    this.http.post('http://90.165.241.212/api/login/', { username, password }).subscribe((response: any)=>{
+    this.http.post('http://127.0.0.1:8000/api/login/', { username, password }).subscribe((response: any)=>{
       localStorage.setItem('access_token', response.access);
     });
-    return this.http.post('http://90.165.241.212/api/login/', { username, password });
+    return this.http.post('http://127.0.0.1:8000/api/login/', { username, password });
 
   }
 

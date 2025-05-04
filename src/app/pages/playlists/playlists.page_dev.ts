@@ -17,7 +17,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class PlaylistsPage implements OnInit {
   token: string | null = null;
   playlists: any[] = [];
-  apiUrl = 'http://90.165.241.212/api/';
+  apiUrl = 'http://127.0.0.1:8000/api/';
   user: any = null;
   constructor(
     private playlistService: PlaylistService,
@@ -81,11 +81,11 @@ export class PlaylistsPage implements OnInit {
   }
   loadUserData() {
     if (!this.token) return;
-
+  
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.token}`
     });
-
+  
     this.http.get(`${this.apiUrl}user/`, { headers }).subscribe(
       (data: any) => {
         this.user = data;

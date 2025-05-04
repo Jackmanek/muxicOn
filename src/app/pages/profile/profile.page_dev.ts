@@ -24,7 +24,7 @@ export class ProfilePage implements OnInit {
 
   ngOnInit() {
     this.loadToken();
-    this.loadUserData();
+    this.loadUserData(); 
     this.loadDownloadedSongs();
   }
 
@@ -45,7 +45,7 @@ export class ProfilePage implements OnInit {
       'Authorization': `Bearer ${this.token}`  // Usamos el token almacenado
     });
 
-    this.http.get('http://90.165.241.212/api/songs/', { headers })
+    this.http.get('http://127.0.0.1:8000/api/songs/', { headers })
       .subscribe(
         (data: any) => {
           console.log('Canciones descargadas desde la API:', data);
@@ -149,11 +149,11 @@ export class ProfilePage implements OnInit {
 
   loadUserData() {
     if (!this.token) return;
-
+  
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.token}`
     });
-
+  
     this.http.get(`${this.apiUrl}user/`, { headers }).subscribe(
       (data: any) => {
         this.user = data;
@@ -163,5 +163,5 @@ export class ProfilePage implements OnInit {
       }
     );
   }
-
+  
 }

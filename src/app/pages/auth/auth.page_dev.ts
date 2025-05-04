@@ -16,7 +16,7 @@ export class AuthPage  {
   authMode: string = 'login';
   loginData = { username: '', password: ''};
   registerData = {username: '', password: '' };
-  apiUrl = 'http://90.165.241.212/api/';
+  apiUrl = 'http://127.0.0.1:8000/api/';
   loginError: string | null = null;
   registerError: string | null = null;
 
