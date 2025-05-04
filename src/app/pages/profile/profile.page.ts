@@ -16,7 +16,7 @@ export class ProfilePage implements OnInit {
   downloadedSongs: any[] = [];
   token: string | null = null;
   newSongUrl: string = '';
-  apiUrl = 'http://127.0.0.1:8000/api/';
+  apiUrl = 'http://90.165.241.212/api/';
   isConverting: boolean = false;
   progressValue: number = 0;
   user: any = null;

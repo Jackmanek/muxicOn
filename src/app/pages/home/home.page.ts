@@ -26,7 +26,7 @@ export class HomePage implements OnInit, OnDestroy {
   isShuffle: boolean = false;
   loopMode: string = 'none';
   volume: number = 1;
-  apiUrl = 'http://90.165.241.212/api';
+  apiUrl = 'http://90.165.241.212/api/';
   showPlayMessage: boolean = false;
   audioUpdateInterval: any = null;
   userInteracted: boolean = false;
@@ -121,7 +121,7 @@ export class HomePage implements OnInit, OnDestroy {
   prepareAudio(song: any) {
     if (!song) return;
 
-    const filePath = encodeURI(this.apiUrl + `${song.file}`);
+    const filePath = encodeURI(`http://90.165.241.212${song.file}`);
 
     // Solo preparamos el audio sin reproducirlo
     this.audioPlayer.src = filePath;
@@ -142,7 +142,7 @@ export class HomePage implements OnInit, OnDestroy {
 
     this.currentSong = song;
     this.currentSongIndex = this.songs.findIndex(s => s.id === song.id);
-    const filePath = encodeURI(this.apiUrl + `${song.file}`);
+    const filePath = encodeURI(`http://90.165.241.212${song.file}`);
 
     try {
       // Pausar reproducción actual
