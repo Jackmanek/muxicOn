@@ -25,26 +25,36 @@ export class MusicPlayerComponent implements OnInit, OnChanges {
   loopMode: "none" | "one" | "all" = "none"
   isExpanded = false
   audioInterval: any
+  private audio = new Audio();
+
 
   ngOnInit() {
     if (this.song) {
       this.duration = this.song.duration || 180 // Default duration if not provided
+    }
+    if (this.song?.url) {
+      this.setupAudio();
     }
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes["song"] && changes["song"].currentValue) {
       this.currentTime = 0
-      this.duration = changes["song"].currentValue.duration || 180
+      this.setupAudio();
     }
 
     if (changes["isPlaying"]) {
       if (this.isPlaying) {
+        this.audio.play();
         this.startTimeUpdate()
       } else {
+        this.audio.pause();
         this.stopTimeUpdate()
       }
     }
+
+
+
   }
 
   togglePlayPause(event?: Event) {
@@ -77,16 +87,15 @@ export class MusicPlayerComponent implements OnInit, OnChanges {
   }
 
   seekAudio() {
-    // En una implementación real, aquí controlarías el audio HTML5
-    console.log("Seeking to:", this.currentTime)
+    if (this.audio) {
+      this.audio.currentTime = this.currentTime;
+    }
   }
 
   setVolume() {
-    // En una implementación real, aquí controlarías el volumen del audio
-    if (this.volume > 0 && this.isMuted) {
-      this.isMuted = false
+    if (this.audio) {
+      this.audio.volume = this.isMuted ? 0 : this.volume;
     }
-    console.log("Setting volume to:", this.isMuted ? 0 : this.volume)
   }
 
   prevSong() {
@@ -132,6 +141,31 @@ export class MusicPlayerComponent implements OnInit, OnChanges {
 
   ngOnDestroy() {
     this.stopTimeUpdate()
+  }
+  private setupAudio() {
+    this.audio.src = this.song.file;
+    this.audio.load();
+  
+    this.audio.onloadedmetadata = () => {
+      this.duration = this.audio.duration;
+    };
+  
+    this.audio.ontimeupdate = () => {
+      this.currentTime = this.audio.currentTime;
+    };
+  
+    this.audio.onended = () => {
+      if (this.loopMode === "one") {
+        this.audio.currentTime = 0;
+        this.audio.play();
+      } else if (this.loopMode === "all") {
+        this.nextSong();
+      } else {
+        this.playPauseToggle.emit(false);
+      }
+    };
+  
+    this.setVolume(); // Inicializa el volumen
   }
 }
 

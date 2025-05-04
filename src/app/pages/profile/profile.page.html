@@ -1,7 +1,7 @@
 <ion-header class="ion-no-border">
   <ion-toolbar class="header-toolbar">
     <ion-title>
-      <span class="app-title">🎧 Mi Perfil</span>
+      <span class="app-title">🎧 Perfil de {{ user?.username }}</span>
     </ion-title>
     <div style="display: grid; place-items: center; width: 100%;">
       <ion-buttons>
@@ -20,7 +20,7 @@
 
 <ion-content class="ion-padding">
   <div class="profile-container">
-    <h2>Mis Canciones Descargadas</h2>
+    <h2>Mis Canciones</h2>
 
     <!-- Barra de progreso -->
     <ion-progress-bar *ngIf="isConverting" [value]="progressValue"></ion-progress-bar>

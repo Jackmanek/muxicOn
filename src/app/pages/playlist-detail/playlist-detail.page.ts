@@ -5,13 +5,16 @@ import { SongService } from 'src/app/services/song.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { addOutline, reorderFourOutline, trashOutline } from 'ionicons/icons';
+import { Router } from '@angular/router';
+import { MusicPlayerComponent } from 'src/app/components/music-player/music-player.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-playlist-detail',
   templateUrl: './playlist-detail.page.html',
   styleUrls: ['./playlist-detail.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule],
+  imports: [CommonModule, IonicModule, FormsModule, MusicPlayerComponent],
 })
 export class PlaylistDetailPage implements OnInit {
   token: string | null = null;
@@ -19,11 +22,15 @@ export class PlaylistDetailPage implements OnInit {
   playlist: any;
   songs: any[] = [];
   reordering: boolean = false;
-
+  currentSong: any = null;  // La canción actualmente seleccionada para reproducir
+  isPlaying: boolean = false;  // Estado de si la canción se está reproduciendo
   // Iconos para usar en la plantilla
   addIcon = addOutline;
   reorderIcon = reorderFourOutline;
   trashIcon = trashOutline;
+  isShuffle: boolean = false;
+  audioPlayer: HTMLAudioElement = new Audio();
+  currentSongIndex: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -59,7 +66,10 @@ export class PlaylistDetailPage implements OnInit {
       this.songs = value as any[];
     });
   }
-
+  playSong(song: any) {
+    this.currentSong = song;
+    this.isPlaying = true;  // Al seleccionar una canción, comenzamos a reproducirla
+  }
   removeSong(songId: number) {
     this.playlistService.removeSongFromPlaylist(this.playlistId, songId).subscribe(() => {
       this.showToast('Canción eliminada de la playlist');
@@ -158,5 +168,81 @@ export class PlaylistDetailPage implements OnInit {
     }, error => {
       this.showToast('Error al añadir la canción');
     });
+  }
+
+  togglePlayPause(playing: boolean) {
+    console.log('togglePlayPause called with:', playing);
+
+    // Si no hay canción actual, seleccionar la primera
+    if (!this.currentSong && this.songs.length > 0) {
+      this.playSong(this.songs[0]);
+      return;
+    }
+
+    // Corregimos la lógica: playing indica el estado DESEADO
+    if (playing) {
+      // Queremos reproducir
+      try {
+        const playPromise = this.audioPlayer.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            this.isPlaying = true;
+          }).catch(error => {
+            console.error("Error al reproducir:", error);
+            this.isPlaying = false;
+
+            if (error.name === 'NotAllowedError') {
+              this.presentToast('Toca el botón de reproducción para escuchar la música');
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error al reproducir:", error);
+        this.isPlaying = false;
+      }
+    } else {
+      // Queremos pausar
+      this.audioPlayer.pause();
+      this.isPlaying = false;
+    }
+  }
+  presentToast(arg0: string) {
+    throw new Error('Method not implemented.');
+  }
+
+  prevSong() {
+    let newIndex;
+
+    if (this.isShuffle) {
+      // Modo aleatorio
+      newIndex = Math.floor(Math.random() * this.songs.length);
+    } else {
+      // Modo normal
+      if (this.currentSong > 0) {
+        newIndex = this.currentSong - 1;
+      } else {
+        newIndex = this.songs.length - 1;
+      }
+    }
+
+    this.playSong(this.songs[newIndex]);
+  }
+
+  nextSong() {
+    let newIndex;
+
+    if (this.isShuffle) {
+      // Modo aleatorio
+      newIndex = Math.floor(Math.random() * this.songs.length);
+    } else {
+      // Modo normal
+      if (this.currentSong < this.songs.length - 1) {
+        newIndex = this.currentSong + 1;
+      } else {
+        newIndex = 0;
+      }
+    }
+
+    this.playSong(this.songs[newIndex]);
   }
 }

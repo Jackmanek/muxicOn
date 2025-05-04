@@ -5,6 +5,7 @@ import { IonHeader, IonButton } from "@ionic/angular/standalone";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MusicPlayerComponent } from 'src/app/components/music-player/music-player.component';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-playlists',
@@ -16,11 +17,13 @@ import { MusicPlayerComponent } from 'src/app/components/music-player/music-play
 export class PlaylistsPage implements OnInit {
   token: string | null = null;
   playlists: any[] = [];
-
+  apiUrl = 'http://127.0.0.1:8000/api/';
+  user: any = null;
   constructor(
     private playlistService: PlaylistService,
     private alertCtrl: AlertController,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -74,7 +77,23 @@ export class PlaylistsPage implements OnInit {
   }
 
   openPlaylist(playlist: any) {
-    this.navCtrl.navigateForward(`/playlists/${playlist.id}`);
+    this.navCtrl.navigateForward(`/playlist/${playlist.id}`);
+  }
+  loadUserData() {
+    if (!this.token) return;
+  
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.token}`
+    });
+  
+    this.http.get(`${this.apiUrl}user/`, { headers }).subscribe(
+      (data: any) => {
+        this.user = data;
+      },
+      (error) => {
+        console.error('Error al cargar el usuario', error);
+      }
+    );
   }
 }
 

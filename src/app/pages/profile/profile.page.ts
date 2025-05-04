@@ -19,11 +19,12 @@ export class ProfilePage implements OnInit {
   apiUrl = 'http://127.0.0.1:8000/api/';
   isConverting: boolean = false;
   progressValue: number = 0;
-
+  user: any = null;
   constructor(private http: HttpClient, private navCtrl: NavController) {}
 
   ngOnInit() {
-    this.loadToken();  // Cargar el token al inicio
+    this.loadToken();
+    this.loadUserData(); 
     this.loadDownloadedSongs();
   }
 
@@ -145,4 +146,22 @@ export class ProfilePage implements OnInit {
 
     this.navCtrl.navigateForward('/home');
   }
+
+  loadUserData() {
+    if (!this.token) return;
+  
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.token}`
+    });
+  
+    this.http.get(`${this.apiUrl}user/`, { headers }).subscribe(
+      (data: any) => {
+        this.user = data;
+      },
+      (error) => {
+        console.error('Error al cargar el usuario', error);
+      }
+    );
+  }
+  
 }

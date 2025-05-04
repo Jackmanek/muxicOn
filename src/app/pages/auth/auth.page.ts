@@ -28,7 +28,7 @@ export class AuthPage  {
     this.http.post(this.apiUrl + 'login/', this.loginData).subscribe(
       (response : any) => {
         localStorage.setItem('access_token', response.access);
-        this.navCtrl.navigateForward('/profile');
+        this.navCtrl.navigateForward('/home');
       },
       error => {
         if (error.status === 400 && error.error?.message){
